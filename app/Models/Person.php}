@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Models;
+
+use MongoDB\Laravel\Eloquent\DocumentModel;
+
+class Person extends DocumentModel
+{
+    protected $collection = 'people';
+    
+    protected $fillable = [
+        'name'
+    ];
+}

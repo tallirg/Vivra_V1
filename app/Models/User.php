@@ -14,14 +14,24 @@ class User extends Authenticatable
     protected $keyType = 'string';
 
     protected $fillable = [
-        'name',
+        'person_id',
         'email',
         'password',
-        'role', // Puede ser 'admin', 'prestador' o 'turista'
+        'role',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    // LA REGLA DE ORO PARA LAS CONTRASEÑAS
+    protected $casts = [
+        'password' => 'hashed',
+    ];
+
+    public function person()
+    {
+        return $this->belongsTo(Person::class, 'person_id');
+    }
 }
