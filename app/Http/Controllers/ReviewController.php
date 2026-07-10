@@ -70,4 +70,23 @@ class ReviewController extends Controller
         $review->delete();
         return response()->json(['mensaje' => 'Reseña eliminada por el administrador'], 200);
     }
+
+	// NUEVO: TURISTA elimina su PROPIA reseña
+    public function destroyOwn($id)
+    {
+        $review = Review::find($id);
+
+        if (!$review) {
+            return response()->json(['error' => 'Reseña no encontrada'], 404);
+        }
+
+        // 🔐 Seguridad: Verificar propiedad
+        if ($review->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Solo puedes eliminar tus propias reseñas'], 403);
+        }
+
+        $review->delete();
+        return response()->json(['mensaje' => 'Tu reseña ha sido eliminada correctamente'], 200);
+    }
 }
+

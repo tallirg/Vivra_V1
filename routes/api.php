@@ -10,7 +10,6 @@ use App\Http\Controllers\AuthController;
 Route::post('/registro', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Cualquier invitado (o turista) puede ver el catálogo de experiencias y reseñas
 Route::get('/experiencias', [ExperienceController::class, 'index']);
 Route::get('/experiencias/{id}', [ExperienceController::class, 'show']);
 Route::get('/experiencias/{experience_id}/resenas', [ReviewController::class, 'index']);
@@ -19,32 +18,33 @@ Route::get('/experiencias/{experience_id}/resenas', [ReviewController::class, 'i
 // --- RUTAS PROTEGIDAS (Requieren Token y Roles Específicos) ---
 Route::middleware('auth:sanctum')->group(function () {
 
-    // Solo 'admin' y 'prestador' pueden CREAR o ACTUALIZAR experiencias
+    // 'admin' y 'prestador' pueden gestionar experiencias
     Route::middleware('role:admin,prestador')->group(function () {
         Route::post('/experiencias', [ExperienceController::class, 'store']);
         Route::put('/experiencias/{id}', [ExperienceController::class, 'update']);
+        Route::delete('/experiencias/{id}', [ExperienceController::class, 'destroy']); // 👈 MOVIDO AQUÍ (Se valida dueño en Controlador)
+        Route::get('/mis-experiencias', [ExperienceController::class, 'myExperiences']); // 👈 NUEVO: Ver solo las suyas
     });
 
     // Solo el 'admin' puede hacer estas acciones
     Route::middleware('role:admin')->group(function () {
-        Route::delete('/experiencias/{id}', [ExperienceController::class, 'destroy']);
         Route::get('/usuarios', [AuthController::class, 'index']);
-        
-        // 👇 ¡FALTABA ESTO! Admin puede borrar reseñas 👇
-        Route::delete('/resenas/{id}', [ReviewController::class, 'destroy']);
+	Route::get('/usuarios/{id}', [AuthController::class, 'show']);
+        Route::put('/usuarios/{id}', [AuthController::class, 'update']); // 👈 NUEVO: Editar Usuario
+        Route::delete('/usuarios/{id}', [AuthController::class, 'destroy']); // 👈 NUEVO: Borrar Usuario
+	Route::post('/usuarios', [AuthController::class, 'store']);
+        Route::delete('/resenas/{id}', [ReviewController::class, 'destroy']); // Admin borra CUALQUIER reseña
     });
 
     // Solo el 'turista' puede hacer estas acciones
     Route::middleware('role:turista')->group(function () {
         Route::post('/carrito-comprar', [App\Http\Controllers\BookingController::class, 'store']);
-        
-        // 👇 ¡FALTABA ESTO! Turista puede crear y editar reseñas 👇
         Route::post('/experiencias/{experience_id}/resenas', [ReviewController::class, 'store']);
         Route::put('/resenas/{id}', [ReviewController::class, 'update']);
+        Route::delete('/resenas/{id}', [ReviewController::class, 'destroyOwn']); // 👈 NUEVO: Turista borra su PROPIA reseña
     });
 
-
-    // Ruta de escáner para tokens
+    // Ruta de debug token
     Route::get('/debug-token', function (Illuminate\Http\Request $request) {
         $token = $request->bearerToken();
         if (!$token) return response()->json(['error' => 'No enviaste el Bearer Token en Postman']);
