@@ -23,9 +23,18 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Solo el 'admin' puede ELIMINAR experiencias del sistema
+    // Solo el 'admin' puede hacer estas acciones
     Route::middleware('role:admin')->group(function () {
         Route::delete('/experiencias/{id}', [ExperienceController::class, 'destroy']);
+        
+        // 👇 ¡AGREGA ESTA LÍNEA AQUÍ! 👇
+        Route::get('/usuarios', [AuthController::class, 'index']);
     });
+
+    Route::middleware('role:turista')->group(function () {
+            Route::post('/carrito-comprar', [App\Http\Controllers\BookingController::class, 'store']);
+        });
+
 
 Route::get('/debug-token', function (Illuminate\Http\Request $request) {
     $token = $request->bearerToken();
