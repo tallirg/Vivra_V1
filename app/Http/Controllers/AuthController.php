@@ -59,4 +59,10 @@ class AuthController extends Controller
             'role' => $user->role
         ], 200);
     }
+public function index()
+    {
+        // Trae todos los usuarios de la colección 'users'
+        $users = User::all();
+	return response()->json($users, 200);
+    }
 }
