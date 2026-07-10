@@ -5,8 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 
-// --- RUTAS PÚBLICAS (No requieren Token) ---
+// =========================================================================
+// RUTAS PÚBLICAS (Invitados y cualquier usuario sin logearse)
+// =========================================================================
 Route::post('/registro', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -15,36 +18,45 @@ Route::get('/experiencias/{id}', [ExperienceController::class, 'show']);
 Route::get('/experiencias/{experience_id}/resenas', [ReviewController::class, 'index']);
 
 
-// --- RUTAS PROTEGIDAS (Requieren Token y Roles Específicos) ---
+// =========================================================================
+// RUTAS PROTEGIDAS (Requieren inicio de sesión y Token válido)
+// =========================================================================
 Route::middleware('auth:sanctum')->group(function () {
 
-    // 'admin' y 'prestador' pueden gestionar experiencias
+    // --- EXCLUSIVO: PRESTADOR ---
+    Route::middleware('role:prestador')->group(function () {
+        Route::post('/experiencias', [ExperienceController::class, 'store']); // Crear Experiencias
+        Route::get('/mis-experiencias', [ExperienceController::class, 'myExperiences']); // Ver las suyas
+    });
+
+    // --- COMPARTIDO: ADMIN Y PRESTADOR ---
     Route::middleware('role:admin,prestador')->group(function () {
-        Route::post('/experiencias', [ExperienceController::class, 'store']);
-        Route::put('/experiencias/{id}', [ExperienceController::class, 'update']);
-        Route::delete('/experiencias/{id}', [ExperienceController::class, 'destroy']); // 👈 MOVIDO AQUÍ (Se valida dueño en Controlador)
-        Route::get('/mis-experiencias', [ExperienceController::class, 'myExperiences']); // 👈 NUEVO: Ver solo las suyas
+        Route::put('/experiencias/{id}', [ExperienceController::class, 'update']); // Editar Experiencias
+        Route::delete('/experiencias/{id}', [ExperienceController::class, 'destroy']); // Borrar Experiencias
     });
 
-    // Solo el 'admin' puede hacer estas acciones
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/usuarios', [AuthController::class, 'index']);
-	Route::get('/usuarios/{id}', [AuthController::class, 'show']);
-        Route::put('/usuarios/{id}', [AuthController::class, 'update']); // 👈 NUEVO: Editar Usuario
-        Route::delete('/usuarios/{id}', [AuthController::class, 'destroy']); // 👈 NUEVO: Borrar Usuario
-	Route::post('/usuarios', [AuthController::class, 'store']);
-        Route::delete('/resenas/{id}', [ReviewController::class, 'destroy']); // Admin borra CUALQUIER reseña
-    });
-
-    // Solo el 'turista' puede hacer estas acciones
+    // --- EXCLUSIVO: TURISTA ---
     Route::middleware('role:turista')->group(function () {
-        Route::post('/carrito-comprar', [App\Http\Controllers\BookingController::class, 'store']);
-        Route::post('/experiencias/{experience_id}/resenas', [ReviewController::class, 'store']);
-        Route::put('/resenas/{id}', [ReviewController::class, 'update']);
-        Route::delete('/resenas/{id}', [ReviewController::class, 'destroyOwn']); // 👈 NUEVO: Turista borra su PROPIA reseña
+        Route::post('/carrito-comprar', [BookingController::class, 'store']); // Comprar Experiencia
+        Route::post('/experiencias/{experience_id}/resenas', [ReviewController::class, 'store']); // Crear Reseñas
+        Route::put('/resenas/{id}', [ReviewController::class, 'update']); // Editar sus Reseñas
     });
 
-    // Ruta de debug token
+    // --- COMPARTIDO: ADMIN Y TURISTA (Para evitar colisiones de URL) ---
+    Route::middleware('role:admin,turista')->group(function () {
+        Route::delete('/resenas/{id}', [ReviewController::class, 'destroy']); // Borrar Reseñas (Lógica interna)
+    });
+
+    // --- EXCLUSIVO: ADMIN ---
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/usuarios', [AuthController::class, 'index']); // Ver Usuarios (todos)
+        Route::get('/usuarios/{id}', [AuthController::class, 'show']); // Ver Usuario por ID
+        Route::post('/usuarios', [AuthController::class, 'store']); // Crear Usuarios
+        Route::put('/usuarios/{id}', [AuthController::class, 'update']); // Editar Usuarios (todos)
+        Route::delete('/usuarios/{id}', [AuthController::class, 'destroy']); // Borrar Usuarios (todos)
+    });
+
+// Ruta de debug token
     Route::get('/debug-token', function (Illuminate\Http\Request $request) {
         $token = $request->bearerToken();
         if (!$token) return response()->json(['error' => 'No enviaste el Bearer Token en Postman']);

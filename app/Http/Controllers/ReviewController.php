@@ -58,35 +58,22 @@ class ReviewController extends Controller
         return response()->json(['mensaje' => 'Reseña actualizada', 'data' => $review], 200);
     }
 
-    // ADMIN: Eliminar cualquier reseña (por lenguaje inapropiado, etc.)
     public function destroy($id)
     {
         $review = Review::find($id);
-        
-        if (!$review) {
-            return response()->json(['error' => 'Reseña no encontrada'], 404);
-        }
-
-        $review->delete();
-        return response()->json(['mensaje' => 'Reseña eliminada por el administrador'], 200);
-    }
-
-	// NUEVO: TURISTA elimina su PROPIA reseña
-    public function destroyOwn($id)
-    {
-        $review = Review::find($id);
 
         if (!$review) {
             return response()->json(['error' => 'Reseña no encontrada'], 404);
         }
 
-        // 🔐 Seguridad: Verificar propiedad
-        if ($review->user_id !== Auth::id()) {
-            return response()->json(['error' => 'Solo puedes eliminar tus propias reseñas'], 403);
+        // 🔐 REGLA ESTRICTA: Si el usuario es Turista, obligatoriamente debe ser el dueño
+        if (Auth::user()->role === 'turista' && $review->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Acceso denegado. Solo puedes borrar tus propias reseñas.'], 403);
         }
 
+        // Si es Admin, el condicional se salta y se borra la reseña directamente (Borrar Reseñas de todos)
         $review->delete();
-        return response()->json(['mensaje' => 'Tu reseña ha sido eliminada correctamente'], 200);
+        return response()->json(['mensaje' => 'Reseña eliminada correctamente'], 200);
     }
 }
 
