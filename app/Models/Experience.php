@@ -21,4 +21,8 @@ class Experience extends Model
         'status', 
         'imagenes' // Como es Mongo, esto guardará el arreglo de Cloudinary sin problema
     ];
+public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }
