@@ -4,14 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Review extends Model
+class Order extends Model
 {
     protected $fillable = [
         'user_id',
         'experience_id',
-        'rating',
-        'comment',
-        'approved',
+        'quantity',
+        'total_price',
+        'status',
+        'payment_method',
+        'notes',
+        'order_date',
     ];
 
     public function user()
@@ -23,4 +26,4 @@ class Review extends Model
     {
         return $this->belongsTo(Experience::class);
     }
-}
+}$_COOKIE

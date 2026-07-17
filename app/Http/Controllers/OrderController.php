@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Review;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
-class ReviewController extends Controller
+class OrderController extends Controller
 {
     public function index()
     {
-        $reviews = Review::with(['user', 'experience'])->get();
-        return view('admin.reviews', compact('reviews'));
+        $orders = Order::with(['user', 'experience'])->get();
+        return view('admin.orders', compact('orders'));
     }
 
     public function create()
@@ -40,7 +40,7 @@ class ReviewController extends Controller
 
     public function destroy($id)
     {
-        Review::destroy($id);
-        return redirect('/admin/reviews');
+        Order::destroy($id);
+        return redirect('/admin/orders');
     }
 }

@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Review;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 
-class ReviewController extends Controller
+class BrandController extends Controller
 {
     public function index()
     {
-        $reviews = Review::with(['user', 'experience'])->get();
-        return view('admin.reviews', compact('reviews'));
+        $brands = Brand::all();
+        return view('admin.brands', compact('brands'));
     }
 
     public function create()
     {
-        //
+        return view('admin.brands.create');
     }
 
     public function store(Request $request)
     {
-        //
+        Brand::create($request->all());
+        return redirect('/admin/brands');
     }
 
     public function show($id)
@@ -40,7 +41,7 @@ class ReviewController extends Controller
 
     public function destroy($id)
     {
-        Review::destroy($id);
-        return redirect('/admin/reviews');
+        Brand::destroy($id);
+        return redirect('/admin/brands');
     }
 }
