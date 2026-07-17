@@ -13,30 +13,17 @@ class BrandController extends Controller
         return view('admin.brands', compact('brands'));
     }
 
-    public function create()
-    {
-        return view('admin.brands.create');
-    }
-
     public function store(Request $request)
     {
         Brand::create($request->all());
         return redirect('/admin/brands');
     }
 
-    public function show($id)
-    {
-        //
-    }
-
-    public function edit($id)
-    {
-        //
-    }
-
     public function update(Request $request, $id)
     {
-        //
+        $brand = Brand::find($id);
+        $brand->update($request->all());
+        return redirect('/admin/brands');
     }
 
     public function destroy($id)

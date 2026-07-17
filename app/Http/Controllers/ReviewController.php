@@ -13,29 +13,11 @@ class ReviewController extends Controller
         return view('admin.reviews', compact('reviews'));
     }
 
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
-    public function show($id)
-    {
-        //
-    }
-
-    public function edit($id)
-    {
-        //
-    }
-
     public function update(Request $request, $id)
     {
-        //
+        $review = Review::find($id);
+        $review->update(['approved' => $request->approved]);
+        return redirect('/admin/reviews');
     }
 
     public function destroy($id)

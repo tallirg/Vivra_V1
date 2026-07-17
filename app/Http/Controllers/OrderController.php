@@ -13,34 +13,17 @@ class OrderController extends Controller
         return view('admin.orders', compact('orders'));
     }
 
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
-    public function show($id)
-    {
-        //
-    }
-
-    public function edit($id)
-    {
-        //
-    }
-
     public function update(Request $request, $id)
     {
-        //
+        $order = Order::find($id);
+        $order->update(['status' => $request->status]);
+        return redirect('/admin/orders');
     }
 
     public function destroy($id)
     {
-        Order::destroy($id);
+        $order = Order::find($id);
+        $order->update(['status' => 'cancelled']);
         return redirect('/admin/orders');
     }
 }
