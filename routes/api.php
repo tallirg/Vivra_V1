@@ -8,6 +8,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ChatbotController;
 
+use App\Http\Controllers\ChatbotController;
+
 // =========================================================================
 // RUTAS PÚBLICAS (Invitados y cualquier usuario sin logearse)
 // =========================================================================
@@ -82,3 +84,9 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
     });
 });
+
+
+//CHATBOT//
+Route::post('/chatbot', 
+[ChatbotController::class,'preguntar']);
+//
