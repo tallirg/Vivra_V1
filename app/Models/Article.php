@@ -18,4 +18,10 @@ class Article extends Model
     {
         return $this->belongsTo(Brand::class);
     }
+
+    // Agregar esta relación
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

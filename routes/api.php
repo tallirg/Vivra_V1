@@ -6,6 +6,7 @@ use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ChatbotController;
 
 // =========================================================================
 // RUTAS PÚBLICAS (Invitados y cualquier usuario sin logearse)
@@ -16,6 +17,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/experiencias', [ExperienceController::class, 'index']);
 Route::get('/experiencias/{id}', [ExperienceController::class, 'show']);
 Route::get('/experiencias/{experience_id}/resenas', [ReviewController::class, 'index']);
+Route::post('/chatbot/chat', [ChatbotController::class, 'chat']);
+Route::post('/chatbot/analyze', [ChatbotController::class, 'analyzePreferences']);
 
 
 // =========================================================================

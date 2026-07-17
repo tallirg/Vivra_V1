@@ -26,4 +26,4 @@ class Order extends Model
     {
         return $this->belongsTo(Experience::class);
     }
-}$_COOKIE
+}

@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use MongoDB\Laravel\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -10,11 +11,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
 
-    protected $collection = 'users';
-    protected $keyType = 'string';
-
     protected $fillable = [
-        'person_id',
+        'name',
         'email',
         'password',
         'role',
@@ -25,13 +23,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    // LA REGLA DE ORO PARA LAS CONTRASEÑAS
     protected $casts = [
         'password' => 'hashed',
     ];
-
-    public function person()
-    {
-        return $this->belongsTo(Person::class, 'person_id');
-    }
 }
