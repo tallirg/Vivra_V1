@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // --- TURISTA ---
     Route::middleware('role:turista')->group(function () {
         Route::post('/carrito-comprar', [BookingController::class, 'store']);
+        Route::get('/mis-reservas', [BookingController::class, 'myBookings']);
         Route::post('/experiencias/{experience_id}/resenas', [ReviewController::class, 'store']);
         Route::put('/resenas/{id}', [ReviewController::class, 'update']);
     });
