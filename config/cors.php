@@ -20,8 +20,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'http://127.0.0.1:5500', // El frontend de tu compañero
-        // 'http://localhost:5173',  // Puedes agregar más orígenes si tú usas otro puerto
+         'http://127.0.0.1:5500'
     ],
 
     'allowed_origins_patterns' => [],

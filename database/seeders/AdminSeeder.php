@@ -21,11 +21,11 @@ class AdminSeeder extends Seeder
         $cat2 = Category::create(['name' => 'Experiencias', 'description' => 'Actividades personalizadas', 'active' => true]);
         $cat3 = Category::create(['name' => 'Naturaleza', 'description' => 'Senderismo y aventura', 'active' => true]);
 
-        // Marcas
+        // Prestadores
         $brand1 = Brand::create(['name' => 'Vivra Travel', 'description' => 'Marca principal', 'active' => true]);
         $brand2 = Brand::create(['name' => 'Oaxaca Adventures', 'description' => 'Tours Oaxaca', 'active' => true]);
 
-        // Artículos
+        // Experiencias
         $art1 = Article::create([
             'name' => 'Tour Oaxaca Premium',
             'description' => 'Tour completo por Oaxaca',

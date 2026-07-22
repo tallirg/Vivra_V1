@@ -1,14 +1,14 @@
 @extends('admin.layout')
 
-@section('title', 'Marcas')
-@section('header', 'Gestión de Marcas')
+@section('title', 'Prestadores')
+@section('header', 'Gestión de Prestadores')
 
 @section('content')
 <div class="space-y-6">
     <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-bold text-warm-800">Marcas</h2>
+        <h2 class="text-2xl font-bold text-warm-800">Prestadores</h2>
         <button onclick="openModal()" class="btn-primary">
-            <i class="fas fa-plus mr-2"></i> Nueva Marca
+            <i class="fas fa-plus mr-2"></i> Nueva Prestador
         </button>
     </div>
 
@@ -46,7 +46,7 @@
 <div id="modalBrand" class="hidden fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
     <div class="bg-warm-50 rounded-lg shadow-xl max-w-2xl w-full mx-4">
         <div class="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 flex justify-between items-center rounded-t-lg">
-            <h3 class="text-lg font-bold" id="modalTitle">Nueva Marca</h3>
+            <h3 class="text-lg font-bold" id="modalTitle">Nueva Prestador</h3>
             <button onclick="closeModal()" class="text-2xl">&times;</button>
         </div>
         <form id="formBrand" method="POST" class="p-6 space-y-4">
@@ -64,7 +64,7 @@
 
 <script>
     function openModal() {
-        document.getElementById('modalTitle').textContent = 'Nueva Marca';
+        document.getElementById('modalTitle').textContent = 'Nueva Prestador';
         document.getElementById('methodField').value = 'POST';
         document.getElementById('formBrand').action = '/admin/brands';
         document.getElementById('name').value = '';
@@ -73,7 +73,7 @@
     }
 
     function editBrand(id, name, description) {
-        document.getElementById('modalTitle').textContent = 'Editar Marca';
+        document.getElementById('modalTitle').textContent = 'Editar Prestador';
         document.getElementById('methodField').value = 'PUT';
         document.getElementById('formBrand').action = `/admin/brands/${id}`;
         document.getElementById('name').value = name;

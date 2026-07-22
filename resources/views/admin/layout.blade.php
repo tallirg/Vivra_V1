@@ -151,16 +151,16 @@
                     <i class="fas fa-chart-line w-5"></i> Dashboard
                 </a>
                 <a href="/admin/articles" class="nav-item {{ request()->is('admin/articles') ? 'active' : '' }}">
-                    <i class="fas fa-box w-5"></i> Artículos
+                    <i class="fas fa-box w-5"></i> Experiencias
                 </a>
                 <a href="/admin/categories" class="nav-item">
                     <i class="fas fa-tag w-5"></i> Categorías
                 </a>
                 <a href="/admin/brands" class="nav-item">
-                    <i class="fas fa-trademark w-5"></i> Marcas
+                    <i class="fas fa-trademark w-5"></i> Prestadores Locales
                 </a>
                 <a href="/admin/orders" class="nav-item {{ request()->is('admin/orders') ? 'active' : '' }}">
-                    <i class="fas fa-shopping-cart w-5"></i> Pedidos
+                    <i class="fas fa-shopping-cart w-5"></i> Reservaciones
                 </a>
                 <a href="/admin/users" class="nav-item {{ request()->is('admin/users') ? 'active' : '' }}">
                     <i class="fas fa-users w-5"></i> Usuarios

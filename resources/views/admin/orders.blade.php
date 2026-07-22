@@ -1,11 +1,11 @@
 @extends('admin.layout')
 
-@section('title', 'Pedidos')
-@section('header', 'Gestión de Pedidos')
+@section('title', 'Reservaciones')
+@section('header', 'Control de Reservaciones')
 
 @section('content')
 <div class="space-y-6">
-    <h2 class="text-2xl font-bold text-warm-800">Pedidos</h2>
+    <h2 class="text-2xl font-bold text-warm-800">Reservaciones</h2>
 
     <div class="card">
         <table class="w-full">
@@ -14,7 +14,7 @@
                     <th class="text-left py-4 px-6 text-sm font-bold text-warm-700">ID</th>
                     <th class="text-left py-4 px-6 text-sm font-bold text-warm-700">Usuario</th>
                     <th class="text-left py-4 px-6 text-sm font-bold text-warm-700">Experiencia</th>
-                    <th class="text-left py-4 px-6 text-sm font-bold text-warm-700">Monto</th>
+                    <th class="text-left py-4 px-6 text-sm font-bold text-warm-700">Total Pagado</th>
                     <th class="text-left py-4 px-6 text-sm font-bold text-warm-700">Estado</th>
                     <th class="text-left py-4 px-6 text-sm font-bold text-warm-700">Acciones</th>
                 </tr>

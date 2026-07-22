@@ -28,7 +28,13 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
-        Category::destroy($id);
-        return redirect('/admin/categories');
+    	try {
+        	\App\Models\Category::destroy($id);
+        	return redirect('/admin/categories')->with('success', 'Categoría eliminada correctamente.');
+    	} catch (\Illuminate\Database\QueryException $e) {
+        	return redirect('/admin/categories')->with('error', 'No se puede eliminar la categoría porque tiene experiencias asociadas.');
+        }
     }
+
+
 }
