@@ -47,12 +47,7 @@ Route::get('/', function () {
         $articles = \App\Models\Article::take(5)->get();
         $expLabels = $articles->pluck('name')->toArray();
         
-        $expData = [];
-        foreach ($articles as $art) {
-            $expData[] = \App\Models\Order::where('article_id', $art->id)
-                ->orWhere('experience_id', $art->id)
-                ->count();
-        }
+        $expData[] = \App\Models\Order::where('experience_id', $art->id)->count();
 
         if (empty($expLabels)) {
             $expLabels = ['Sin Experiencias'];
