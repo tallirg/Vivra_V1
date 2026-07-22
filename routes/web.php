@@ -43,11 +43,14 @@ Route::get('/', function () {
                 ->count();
         }
 
-        // 2. Datos reales para la gráfica: Experiencias registradas
-        $articles = \App\Models\Article::take(5)->get();
-        $expLabels = $articles->pluck('name')->toArray();
-        
-        $expData[] = \App\Models\Order::where('experience_id', $art->id)->count();
+	// 2. Datos reales para la gráfica: Experiencias registradas
+	$articles = \App\Models\Article::take(5)->get();
+	$expLabels = $articles->pluck('name')->toArray();
+
+	$expData = [];
+	foreach ($articles as $art) {
+    		$expData[] = \App\Models\Order::where('experience_id', $art->id)->count();
+	}
 
         if (empty($expLabels)) {
             $expLabels = ['Sin Experiencias'];
