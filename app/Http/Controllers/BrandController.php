@@ -10,8 +10,11 @@ class BrandController extends Controller
 {
     public function index()
     {
-        // Limpia espacios y busca cualquier variante que contenga "prestador"
-        $prestadores = User::whereRaw('LOWER(TRIM(role)) LIKE ?', ['%prestador%'])->get();
+        // Busca usuarios cuyo rol sea 'provider' (inglés) o 'prestador' (español)
+        $prestadores = User::whereIn('role', ['provider', 'prestador'])
+            ->orWhereRaw('LOWER(TRIM(role)) LIKE ?', ['%provider%'])
+            ->orWhereRaw('LOWER(TRIM(role)) LIKE ?', ['%prestador%'])
+            ->get();
 
         return view('admin.brands', compact('prestadores'));
     }
