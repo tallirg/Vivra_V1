@@ -2,33 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Brand;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class BrandController extends Controller
 {
     public function index()
     {
-        $brands = Brand::all();
-        return view('admin.brands', compact('brands'));
+        // Obtenemos solo los usuarios prestadores
+        $prestadores = User::where('role', 'prestador')->get();
+        return view('admin.brands', compact('prestadores'));
     }
 
     public function store(Request $request)
     {
-        Brand::create($request->all());
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'prestador', // Asignamos el rol automáticamente
+        ]);
+
         return redirect('/admin/brands');
     }
 
     public function update(Request $request, $id)
     {
-        $brand = Brand::find($id);
-        $brand->update($request->all());
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'.$id,
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
         return redirect('/admin/brands');
     }
 
     public function destroy($id)
     {
-        Brand::destroy($id);
+        User::destroy($id);
         return redirect('/admin/brands');
     }
 }

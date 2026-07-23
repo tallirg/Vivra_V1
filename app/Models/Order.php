@@ -21,6 +21,12 @@ class Order extends Model
         'order_date'
     ];
 
+    // Relación con el Usuario (requerida por with('user'))
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     // Relación con el artículo (experiencia)
     public function experience()
     {
