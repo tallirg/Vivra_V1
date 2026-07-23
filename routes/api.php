@@ -26,19 +26,19 @@ Route::get('/experiencias/{experience_id}/resenas', [ReviewController::class, 'i
 Route::middleware('auth:sanctum')->group(function () {
 
     // --- PRESTADOR ---
-    Route::middleware('role:prestador')->group(function () {
+    Route::middleware('role:provider')->group(function () {
         Route::post('/experiencias', [ArticleController::class, 'store']);
         Route::get('/mis-experiencias', [ArticleController::class, 'myExperiences']);
     });
 
     // --- ADMIN Y PRESTADOR ---
-    Route::middleware('role:admin,prestador')->group(function () {
+    Route::middleware('role:admin,provider')->group(function () {
         Route::put('/experiencias/{id}', [ArticleController::class, 'update']);
         Route::delete('/experiencias/{id}', [ArticleController::class, 'destroy']);
     });
 
     // --- TURISTA ---
-    Route::middleware('role:turista')->group(function () {
+    Route::middleware('role:tourist')->group(function () {
         Route::post('/carrito-comprar', [BookingController::class, 'store']);
         Route::get('/mis-reservas', [BookingController::class, 'myBookings']);
         Route::post('/experiencias/{experience_id}/resenas', [ReviewController::class, 'store']);
@@ -46,7 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // --- ADMIN Y TURISTA ---
-    Route::middleware('role:admin,turista')->group(function () {
+    Route::middleware('role:admin,tourist')->group(function () {
         Route::delete('/resenas/{id}', [ReviewController::class, 'destroy']);
     });
 
