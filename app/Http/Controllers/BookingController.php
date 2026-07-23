@@ -12,7 +12,7 @@ class BookingController extends Controller // <-- 2. Mantenemos el nombre para q
     public function store(Request $request)
     {
         $request->validate([
-            'experience_id' => 'required|exists:experiences,id',
+            'experience_id' => 'required|exists:articles,id',
         ]);
 
         // <-- 3. Usamos Order::create para guardar en la tabla orders
