@@ -10,8 +10,9 @@ class BrandController extends Controller
 {
     public function index()
     {
-        // Obtenemos solo los usuarios prestadores
-        $prestadores = User::where('role', 'prestador')->get();
+        // Acepta 'prestador', 'Prestador' o 'PRESTADOR'
+        $prestadores = User::whereIn('role', ['prestador', 'Prestador', 'PRESTADOR'])->get();
+
         return view('admin.brands', compact('prestadores'));
     }
 
