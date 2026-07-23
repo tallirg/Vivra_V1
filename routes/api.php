@@ -6,6 +6,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ChatbotController;
 
 
@@ -21,6 +22,7 @@ Route::get('/experiencias/{id}', [ArticleController::class, 'show']);
 Route::get('/experiencias/{experience_id}/resenas', [ReviewController::class, 'index']);
 Route::get('/experiencias/{experience_id}/horarios', [BookingController::class, 'getSchedules']);
 
+Route::put('/admin/orders/{id}', [OrderController::class, 'update']);
 
 // =========================================================================
 // RUTAS PROTEGIDAS
@@ -59,6 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/usuarios', [AuthController::class, 'store']);
         Route::put('/usuarios/{id}', [AuthController::class, 'update']);
         Route::delete('/usuarios/{id}', [AuthController::class, 'destroy']);
+        Route::delete('/reservaciones/{id}', [OrderController::class, 'destroy'])->name('reservaciones.destroy');
     });
 
 });

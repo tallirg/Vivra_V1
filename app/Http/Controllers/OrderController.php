@@ -22,8 +22,8 @@ class OrderController extends Controller
 
     public function destroy($id)
     {
-        $order = Order::find($id);
-        $order->update(['status' => 'cancelled']);
-        return redirect('/admin/orders');
+        $order = Order::findOrFail($id);
+        $order->delete();
+        return redirect()->back()->with('success', 'Reservación eliminada con éxito de la base de datos.');
     }
 }
