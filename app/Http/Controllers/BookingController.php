@@ -109,4 +109,26 @@ class BookingController extends Controller
             'data' => $orders
         ], 200);
     }
+
+    // Función para obtener los horarios de una experiencia en específico
+    public function getSchedules($experience_id)
+    {
+        // Buscamos todos los horarios que pertenezcan al ID de esta experiencia
+        $schedules = \App\Models\ArticleSchedule::where('article_id', $experience_id)
+            ->orderBy('start_time', 'asc') // Los ordenamos de más temprano a más tarde
+            ->get();
+
+        // Verificamos si la experiencia tiene horarios registrados
+        if ($schedules->isEmpty()) {
+            return response()->json([
+                'message' => 'No hay horarios disponibles para esta experiencia.',
+                'data' => []
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Horarios recuperados con éxito',
+            'data' => $schedules
+        ], 200);
+    }
 }

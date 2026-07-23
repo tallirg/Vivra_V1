@@ -9,6 +9,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ChatbotController;
 
 
+
 // =========================================================================
 // RUTAS PÚBLICAS
 // =========================================================================
@@ -18,6 +19,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/experiencias', [ArticleController::class, 'index']);
 Route::get('/experiencias/{id}', [ArticleController::class, 'show']);
 Route::get('/experiencias/{experience_id}/resenas', [ReviewController::class, 'index']);
+Route::get('/experiencias/{experience_id}/horarios', [BookingController::class, 'getSchedules']);
 
 
 // =========================================================================
@@ -58,4 +60,5 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/usuarios/{id}', [AuthController::class, 'update']);
         Route::delete('/usuarios/{id}', [AuthController::class, 'destroy']);
     });
+
 });
