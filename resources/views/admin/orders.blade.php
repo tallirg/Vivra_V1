@@ -39,13 +39,13 @@
                     </td>
                     <td class="py-4 px-6 text-sm space-x-2 flex">
                         <button onclick="changeStatus({{ $order->id }}, '{{ $order->status }}')" class="text-blue-600 hover:text-blue-800"><i class="fas fa-edit"></i></button>
-                        <form action="{{ route('reservaciones.destroy', $order->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="text-red-600 hover:text-red-800" title="Eliminar de la BD" onclick="return confirm('¿Estás seguro de eliminar permanentemente esta reservación?')">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </form>
+                        <form action="/admin/orders/{{ $order->id }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-red-600 hover:text-red-800" title="Eliminar registro" onclick="return confirm('¿Estás seguro de eliminar permanentemente esta reservación?')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </form>
                     </td>
                 </tr>
                 @endforeach

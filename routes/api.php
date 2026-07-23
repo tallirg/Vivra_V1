@@ -27,9 +27,9 @@ Route::get('/experiencias/{experience_id}/resenas', [ReviewController::class, 'i
 Route::get('/experiencias/{experience_id}/horarios', [BookingController::class, 'getSchedules']);
 
 // =========================================================================
-// PANEL ADMINISTRATIVO WEB (Usa autenticación por Sesión 'auth')
+// PANEL ADMINISTRATIVO WEB (Forzamos autenticación por Sesión Web)
 // =========================================================================
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['web', 'auth:web'])->group(function () {
     
     // Control de Reservaciones
     Route::get('/admin/orders', [OrderController::class, 'index']);
