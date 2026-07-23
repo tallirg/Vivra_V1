@@ -2,28 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    use HasFactory;
+
+    // Liberamos las columnas para poder guardar la información
     protected $fillable = [
-        'user_id',
-        'experience_id',
-        'quantity',
-        'total_price',
-        'status',
-        'payment_method',
-        'notes',
-        'order_date',
+        'user_id', 
+        'experience_id', 
+        'quantity', 
+        'total_price', 
+        'status', 
+        'payment_method', 
+        'notes', 
+        'order_date'
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
+    // Relación con el artículo (experiencia)
     public function experience()
     {
-        return $this->belongsTo(Experience::class);
+        return $this->belongsTo(Article::class, 'experience_id', 'id');
     }
 }

@@ -9,17 +9,23 @@ use Illuminate\Support\Facades\Auth;
 class BookingController extends Controller // <-- 2. Mantenemos el nombre para que api.php no falle
 {
     // Función para crear una nueva reserva (comprar)
-    public function store(Request $request)
+public function store(Request $request)
     {
+        // 1. Validamos buscando en la tabla correcta (articles)
         $request->validate([
             'experience_id' => 'required|exists:articles,id',
         ]);
 
-        // <-- 3. Usamos Order::create para guardar en la tabla orders
+        // 2. Creamos la orden llenando TODOS los campos obligatorios
         $order = Order::create([
             'user_id' => Auth::id(), 
             'experience_id' => $request->experience_id,
+            'quantity' => $request->slots ?? 1, // Recibimos los slots desde Flutter
+            'total_price' => 0, // Lo dejamos en 0 por ahora para que no marque error
             'status' => 'confirmed', 
+            'payment_method' => 'tarjeta',
+            'order_date' => now(), // Genera la fecha y hora actual automáticamente
+            'notes' => 'Reserva desde la app móvil'
         ]);
 
         return response()->json([
