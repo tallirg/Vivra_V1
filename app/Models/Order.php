@@ -18,7 +18,9 @@ class Order extends Model
         'status', 
         'payment_method', 
         'notes', 
-        'order_date'
+        'order_date',
+        'booking_date',
+        'schedule_id'
     ];
 
     // Relación con el Usuario (requerida por with('user'))
@@ -31,5 +33,10 @@ class Order extends Model
     public function experience()
     {
         return $this->belongsTo(Article::class, 'experience_id', 'id');
+    }
+
+    public function schedule()
+    {
+        return $this->belongsTo(ArticleSchedule::class, 'schedule_id', 'id');
     }
 }

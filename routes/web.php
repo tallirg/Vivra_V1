@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
+//use Illuminate\Support\Facades\Artisan;
 
 // Auth
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -122,4 +123,9 @@ Route::get('/', function () {
         return redirect('admin/users');
     });
 
+    // Comentado por seguridad:
+    // Route::get('/admin/run-migrations', function () {
+    //     Artisan::call('migrate', ['--force' => true]);
+    //     return '<pre>' . Artisan::output() . '</pre>';
+    // });
 });
