@@ -184,7 +184,7 @@
                     </div>
 
                     <!-- Botón para Cerrar Sesión -->
-                    <form action="{{ route('logout') }}" method="POST" class="m-0">
+                    <form action="/logout" method="POST" class="m-0">
                         @csrf
                         <button type="submit" class="text-warm-600 hover:text-red-600 p-2 rounded-lg transition" title="Cerrar Sesión">
                             <i class="fas fa-sign-out-alt text-lg"></i>
