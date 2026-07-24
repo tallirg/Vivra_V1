@@ -9,6 +9,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\ChatbotController;
 
 // =========================================================================
 // RUTAS PÚBLICAS
@@ -16,6 +17,8 @@ use App\Http\Controllers\BrandController;
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// 🤖 Ruta para el Chatbot de IA (Gemini)
+Route::post('/chat', [ChatbotController::class, 'chat']);
 
 Route::get('/', function () {
     return redirect('/login');
