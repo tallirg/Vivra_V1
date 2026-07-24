@@ -38,8 +38,7 @@ class ChatbotController extends Controller
             . "Usa la siguiente información de nuestro catálogo para responder de forma breve, clara y amigable:\n\n"
             . $contextText;
 
-        // 🟢 Usamos la versión v1 con gemini-1.5-flash
-        $url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={$apiKey}";
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}";
 
         try {
             $response = Http::post($url, [
