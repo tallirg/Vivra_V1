@@ -25,7 +25,8 @@ class ChatbotController extends Controller
         }
 
         // 2. Traer las experiencias activas de la BD para darle contexto real a la IA
-        $experiences = Article::select('name', 'description', 'price')->get();
+        // Enviar solo name, description y price evita consumir tokens innecesarios
+        $experiences = Article::select('name', 'description', 'price')->take(10)->get();
         $contextText = "Experiencias disponibles en la plataforma Vivra:\n";
         foreach ($experiences as $exp) {
             $contextText .= "- {$exp->name}: {$exp->description} (Precio: \${$exp->price} MXN)\n";
@@ -56,6 +57,7 @@ class ChatbotController extends Controller
                 ]
             ]);
 
+            // 1. Respuesta exitosa
             if ($response->successful()) {
                 $reply = $response->json('candidates.0.content.parts.0.text') 
                     ?? 'Lo siento, no pude procesar tu consulta en este momento.';
@@ -65,12 +67,25 @@ class ChatbotController extends Controller
                 ], 200);
             }
 
+            // 2. Si se excede el límite de peticiones por minuto (429)
+            if ($response->status() === 429) {
+                return response()->json([
+                    'reply' => 'El asistente está recibiendo muchas consultas en este momento. Por favor, intenta de nuevo en un minuto.'
+                ], 200);
+            }
+
+            // 3. Otros errores
             return response()->json([
                 'error' => 'Ocurrió un problema con el servicio de IA.',
                 'details' => $response->json()
             ], 500);
 
         } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error de conexión con Gemini.',
+                'message' => $e->getMessage()
+            ], 500);
+        }catch (\Exception $e) {
             return response()->json([
                 'error' => 'Error de conexión con Gemini.',
                 'message' => $e->getMessage()
