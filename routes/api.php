@@ -19,6 +19,7 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/register', [AuthController::class, 'store']);
+Route::post('/register', [AuthController::class, 'register']);
 // 🤖 Ruta para el Chatbot de IA (Gemini)
 Route::post('/chat', [ChatbotController::class, 'chat']);
 
