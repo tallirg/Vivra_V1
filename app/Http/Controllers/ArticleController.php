@@ -23,18 +23,25 @@ class ArticleController extends Controller
         return view('admin.articles.create');
     }
 
-    public function store(Request $request)
-    {
-        $article = Article::create($request->all());
+public function store(Request $request)
+{
+    $article = Article::create($request->all());
 
-        if ($request->wantsJson() || $request->segment(1) === 'api') {
-            return response()->json([
-                'message' => 'Experiencia creada con éxito',
-                'article' => $article
-            ], 201);
+    // Crear los horarios asociados si se envían
+    if ($request->has('schedules')) {
+        foreach ($request->schedules as $scheduleData) {
+            $article->schedules()->create($scheduleData);
         }
+    }
 
-        return redirect('/admin/articles');
+    if ($request->wantsJson() || $request->segment(1) === 'api') {
+        return response()->json([
+            'message' => 'Experiencia creada con éxito',
+            'article' => $article->load('schedules') // opcional: incluir los schedules en la respuesta
+        ], 201);
+    }
+
+    return redirect('/admin/articles');
     }
 
     public function show(Request $request, $id)

@@ -18,6 +18,7 @@ use App\Http\Controllers\MessageController;
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/register', [AuthController::class, 'store']);
 // 🤖 Ruta para el Chatbot de IA (Gemini)
 Route::post('/chat', [ChatbotController::class, 'chat']);
 
