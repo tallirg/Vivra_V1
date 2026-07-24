@@ -7,7 +7,6 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
-//use Illuminate\Support\Facades\Artisan;
 
 // Auth
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -18,70 +17,23 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-    // Admin Panel - Protegido
-    Route::middleware(['auth'])->group(function () {
+// Admin Panel - Protegido
+Route::middleware(['auth'])->group(function () {
     
-    Route::get('/admin/dashboard', function () {
-        $totalUsers = \App\Models\User::count();
-        $totalExperiences = \App\Models\Article::count();
-        $pendingExperiences = \App\Models\Article::where('active', false)->count();
-        $totalOrders = \App\Models\Order::count();
-        $totalRevenue = \App\Models\Order::sum('total_price') ?? 0;
-        $latestOrders = \App\Models\Order::with(['user', 'experience'])->latest()->take(5)->get();
+    // Dashboard: En lugar de 60 líneas de código aquí, llamamos al método del controlador
+    Route::get('/admin/dashboard', [OrderController::class, 'dashboard'])->name('admin.dashboard');
 
-        // 1. Datos reales para la gráfica: Reservas por Mes (Últimos 6 meses)
-        $monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-        $chartMonths = [];
-        $monthlyData = [];
-
-        for ($i = 5; $i >= 0; $i--) {
-            $date = \Carbon\Carbon::now()->subMonths($i);
-            $chartMonths[] = $monthNames[$date->month - 1];
-            
-            // Cuenta las reservaciones reales de cada mes en SQLite
-            $monthlyData[] = \App\Models\Order::whereYear('created_at', $date->year)
-                ->whereMonth('created_at', $date->month)
-                ->count();
-        }
-
-	// 2. Datos reales para la gráfica: Experiencias registradas
-	$articles = \App\Models\Article::take(5)->get();
-	$expLabels = $articles->pluck('name')->toArray();
-
-	$expData = [];
-	foreach ($articles as $art) {
-    		$expData[] = \App\Models\Order::where('experience_id', $art->id)->count();
-	}
-
-        if (empty($expLabels)) {
-            $expLabels = ['Sin Experiencias'];
-            $expData = [0];
-        }
-
-        return view('admin.dashboard', compact(
-            'totalUsers',
-            'totalExperiences',
-            'pendingExperiences',
-            'totalOrders',
-            'totalRevenue',
-            'latestOrders',
-            'chartMonths',
-            'monthlyData',
-            'expLabels',
-            'expData'
-        ));
-    });
-
+    // CRUDs Principales
     Route::resource('admin/articles', ArticleController::class);
     Route::resource('admin/categories', CategoryController::class);
     Route::resource('admin/brands', BrandController::class);
     Route::resource('admin/orders', OrderController::class);
     Route::resource('admin/reviews', ReviewController::class);
+
     // Listar usuarios con Filtros y Buscador
     Route::get('admin/users', function (Illuminate\Http\Request $request) {
         $query = App\Models\User::query();
 
-        // Filtro de búsqueda por Nombre o Email
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
@@ -89,7 +41,6 @@ Route::get('/', function () {
             });
         }
 
-        // Filtro por Rol específico
         if ($request->filled('role') && $request->role !== 'Todos los roles') {
             $query->where('role', $request->role);
         }
@@ -122,10 +73,4 @@ Route::get('/', function () {
         App\Models\User::destroy($id);
         return redirect('admin/users');
     });
-
-    // Comentado por seguridad:
-    // Route::get('/admin/run-migrations', function () {
-    //     Artisan::call('migrate', ['--force' => true]);
-    //     return '<pre>' . Artisan::output() . '</pre>';
-    // });
 });
