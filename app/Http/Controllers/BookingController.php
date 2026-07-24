@@ -131,4 +131,22 @@ class BookingController extends Controller
             'data' => $schedules
         ], 200);
     }
+    public function providerBookings()
+    {
+        $providerId = Auth::id();
+
+        // Buscamos las órdenes cuyas experiencias pertenezcan a este prestador
+        $orders = Order::with(['experience', 'user', 'schedule'])
+            ->whereHas('experience', function ($query) use ($providerId) {
+                // Filtra por el ID del prestador (revisa brand_id o user_id)
+                $query->where('brand_id', $providerId)
+                      ->orWhere('user_id', $providerId);
+            })
+            ->latest() // Muestra las más recientes primero
+            ->get();
+
+        return response()->json([
+            'data' => $orders
+        ], 200);
+    }
 }
