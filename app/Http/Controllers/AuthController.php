@@ -36,7 +36,8 @@ class AuthController extends Controller
                 return response()->json([
                     'message' => '¡Bienvenido a Vivra!',
                     'token' => $token,
-                    'user' => $user
+                    'role'  => $user->role, // 👈 ¡AQUÍ ESTÁ EL CAMBIO CLAVE!
+                    'user'  => $user
                 ], 200);
             }
 
@@ -76,8 +77,9 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Usuario registrado exitosamente',
-            'user' => $user,
-            'token' => $token
+            'token' => $token,
+            'role'  => $user->role, // 👈 También lo agregamos aquí por consistencia
+            'user'  => $user
         ], 201);
     }
 
