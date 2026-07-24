@@ -27,7 +27,7 @@ Route::get('/', function () {
 
 Route::get('/experiencias', [ArticleController::class, 'index']);
 Route::get('/experiencias/{id}', [ArticleController::class, 'show']);
-Route::get('/experiencias/{experience_id}/resenas', [ReviewController::class, 'index']);
+Route::get('/experiencias/{experience_id}/resenas', [ReviewController::class, 'getForExperience']);
 Route::get('/experiencias/{experience_id}/horarios', [BookingController::class, 'getSchedules']);
 
 // =========================================================================
