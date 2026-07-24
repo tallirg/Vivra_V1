@@ -58,11 +58,11 @@ class ChatbotController extends Controller
                 ], 200);
             }
 
-            if ($response->status() === 429) {
+            /*if ($response->status() === 429) {
                 return response()->json([
                     'reply' => 'El servidor de IA está saturado en este momento. Intenta de nuevo en unos momentos.'
                 ], 200);
-            }
+            }*/
 
             return response()->json([
                 'error' => 'Ocurrió un problema con el servicio de IA.',
