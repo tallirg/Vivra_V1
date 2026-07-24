@@ -4,67 +4,78 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Models\Article;
 
 class ChatbotController extends Controller
 {
-
-    public function preguntar(Request $request)
+    public function chat(Request $request)
     {
-
+        // 1. Validar el mensaje de entrada
         $request->validate([
-            'mensaje'=>'required|string'
+            'message' => 'required|string|max:500',
         ]);
 
+        $userMessage = $request->input('message');
+        $apiKey = config('services.gemini.api_key');
 
-        $mensaje = $request->mensaje;
+        if (!$apiKey) {
+            return response()->json([
+                'error' => 'La API Key de Gemini no está configurada.'
+            ], 500);
+        }
 
+        // 2. Traer las experiencias activas de la BD para darle contexto real a la IA
+        $experiences = Article::select('name', 'description', 'price')->get();
+        $contextText = "Experiencias disponibles en la plataforma Vivra:\n";
+        foreach ($experiences as $exp) {
+            $contextText .= "- {$exp->name}: {$exp->description} (Precio: \${$exp->price} MXN)\n";
+        }
 
-        $response = Http::post(
-            'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . env('GEMINI_API_KEY'),
-            [
-                "contents"=>[
+        // 3. Prompt de sistema
+        $systemInstruction = "Eres un asistente virtual amable y servicial de la plataforma turística Vivra en Oaxaca. "
+            . "Tu objetivo es ayudar a los usuarios recomendándoles experiencias turísticas locales de nuestro catálogo. "
+            . "Usa la siguiente información de nuestro catálogo para responder de forma breve, clara y amigable:\n\n"
+            . $contextText;
+
+        // 4. Llamada HTTP a la API de Gemini 1.5 Flash
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}";
+
+        try {
+            $response = Http::post($url, [
+                'system_instruction' => [
+                    'parts' => [
+                        ['text' => $systemInstruction]
+                    ]
+                ],
+                'contents' => [
                     [
-                        "parts"=>[
-                            [
-                                "text"=>
-                                "
-                                Eres el asistente virtual de la tienda Vivra.
-
-                                Ayudas a clientes con:
-                                - productos
-                                - precios
-                                - compras
-                                - dudas generales
-
-                                Responde de manera amable y breve.
-
-                                Pregunta del cliente:
-                                ".$mensaje
-                            ]
+                        'role' => 'user',
+                        'parts' => [
+                            ['text' => $userMessage]
                         ]
                     ]
                 ]
-            ]
-        );
+            ]);
 
+            if ($response->successful()) {
+                $reply = $response->json('candidates.0.content.parts.0.text') 
+                    ?? 'Lo siento, no pude procesar tu consulta en este momento.';
 
-        if($response->failed())
-        {
+                return response()->json([
+                    'reply' => trim($reply)
+                ], 200);
+            }
+
             return response()->json([
-                "error"=>"Error al conectar con Gemini",
-                "detalle"=>$response->json()
-            ],500);
+                'error' => 'Ocurrió un problema con el servicio de IA.',
+                'details' => $response->json()
+            ], 500);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error de conexión con Gemini.',
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-
-        $data=$response->json();
-
-
-        return response()->json([
-            "pregunta"=>$mensaje,
-            "respuesta"=>$data["candidates"][0]["content"]["parts"][0]["text"]
-        ]);
-
     }
-
 }
