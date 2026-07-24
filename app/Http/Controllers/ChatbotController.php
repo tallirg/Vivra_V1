@@ -35,8 +35,8 @@ class ChatbotController extends Controller
             . $contextText . "\n\n"
             . "Pregunta del usuario: " . $userMessage;
 
-        // 3. Endpoint v1beta con gemini-2.0-flash
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}";
+        // 🟢 Cambiamos al modelo gemini-2.0-flash-lite
+$url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={$apiKey}";
 
         try {
             $response = Http::post($url, [
