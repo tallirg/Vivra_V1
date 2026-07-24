@@ -15,13 +15,13 @@ class ChatbotController extends Controller
         ]);
 
         $userMessage = $request->input('message');
-        $apiKey = config('services.gemini.api_key');
+        $apiKey = env('GROQ_API_KEY');
 
         if (!$apiKey) {
-            return response()->json(['error' => 'La API Key de Gemini no está configurada.'], 500);
+            return response()->json(['error' => 'La API Key de Groq no está configurada.'], 500);
         }
 
-        // 1. Tomamos máximo 10 experiencias para no saturar tokens
+        // Consultamos el catálogo
         $experiences = Article::select('name', 'description', 'price')->take(10)->get();
         
         $contextText = "Catálogo de experiencias en Vivra (Oaxaca):\n";
@@ -29,51 +29,35 @@ class ChatbotController extends Controller
             $contextText .= "- {$exp->name}: {$exp->description} (\${$exp->price} MXN)\n";
         }
 
-        // 2. Unificamos las instrucciones y el mensaje en un solo Prompt
-        $promptCompleto = "Eres el asistente virtual amable de la plataforma turística Vivra en Oaxaca. "
-            . "Responde de forma breve, útil y cordial usando este catálogo de experiencias:\n\n"
-            . $contextText . "\n\n"
-            . "Pregunta del usuario: " . $userMessage;
-
-        // 🟢 Cambiamos al modelo gemini-2.0-flash-lite
-$url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=){$apiKey}";
+        $systemPrompt = "Eres el asistente virtual amable de la plataforma turística Vivra en Oaxaca. "
+            . "Responde de forma breve, útil y cordial usando este catálogo:\n\n" . $contextText;
 
         try {
-            $response = Http::post($url, [
-                'contents' => [
-                    [
-                        'parts' => [
-                            ['text' => $promptCompleto]
-                        ]
-                    ]
-                ]
+            // Endpoint de Groq (Compatible con formato OpenAI)
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $apiKey,
+                'Content-Type' => 'application/json',
+            ])->post('https://api.groq.com/openai/v1/chat/completions', [
+                'model' => 'llama-3.3-70b-versatile',
+                'messages' => [
+                    ['role' => 'system', 'content' => $systemPrompt],
+                    ['role' => 'user', 'content' => $userMessage],
+                ],
+                'temperature' => 0.7,
             ]);
 
             if ($response->successful()) {
-                $reply = $response->json('candidates.0.content.parts.0.text') 
-                    ?? 'Lo siento, no pude procesar tu consulta en este momento.';
-
-                return response()->json([
-                    'reply' => trim($reply)
-                ], 200);
+                $reply = $response->json('choices.0.message.content');
+                return response()->json(['reply' => trim($reply)], 200);
             }
 
-            /*if ($response->status() === 429) {
-                return response()->json([
-                    'reply' => 'El servidor de IA está saturado en este momento. Intenta de nuevo en unos momentos.'
-                ], 200);
-            }*/
-
             return response()->json([
-                'error' => 'Ocurrió un problema con el servicio de IA.',
+                'error' => 'Error al comunicarse con la IA.',
                 'details' => $response->json()
             ], 500);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Error de conexión con Gemini.',
-                'message' => $e->getMessage()
-            ], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }
