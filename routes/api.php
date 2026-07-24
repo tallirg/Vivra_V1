@@ -58,6 +58,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/messages', [MessageController::class, 'getMessages']);
     Route::post('/messages', [MessageController::class, 'store']);
 
+    Route::get('/user', function (Request $request) { return $request->user(); });
+
     // --- TURISTA ---
     Route::middleware('role:tourist')->group(function () {
         Route::post('/carrito-comprar', [BookingController::class, 'store']);
