@@ -39,7 +39,7 @@ class Article extends Model
     
     public function schedules()
     {
-        return $this->hasMany(ArticleSchedule::class);
+        return $this->hasMany(ArticleSchedule::class, 'article_id');
     }
 
         public function register(Request $request)
