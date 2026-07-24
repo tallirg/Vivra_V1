@@ -23,26 +23,32 @@ class ArticleController extends Controller
         return view('admin.articles.create');
     }
 
-public function store(Request $request)
+    public function store(Request $request)
 {
-    $article = Article::create($request->all());
+    try {
+        $article = Article::create($request->all());
 
-    // Crear los horarios asociados si se envían
-    if ($request->has('schedules')) {
-        foreach ($request->schedules as $scheduleData) {
-            $article->schedules()->create($scheduleData);
+        if ($request->has('schedules')) {
+            foreach ($request->schedules as $scheduleData) {
+                $article->schedules()->create($scheduleData);
+            }
         }
-    }
 
-    if ($request->wantsJson() || $request->segment(1) === 'api') {
+        if ($request->wantsJson() || $request->segment(1) === 'api') {
+            return response()->json([
+                'message' => 'Experiencia creada con éxito',
+                'article' => $article->load('schedules')
+            ], 201);
+        }
+        return redirect('/admin/articles');
+
+    } catch (\Exception $e) {
+        // 🌟 LA TRAMPA: Esto nos dirá exactamente qué columna o archivo falló
         return response()->json([
-            'message' => 'Experiencia creada con éxito',
-            'article' => $article->load('schedules') // opcional: incluir los schedules en la respuesta
-        ], 201);
+            'message' => 'Error de BD: ' . $e->getMessage()
+        ], 500);
     }
-
-    return redirect('/admin/articles');
-    }
+}
 
     public function show(Request $request, $id)
     {
