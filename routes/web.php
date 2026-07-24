@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\DashboardController; // 👈 Importamos el nuevo controlador
 
 // Auth
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -20,17 +21,17 @@ Route::get('/', function () {
 // Admin Panel - Protegido
 Route::middleware(['auth'])->group(function () {
     
-    // Dashboard: En lugar de 60 líneas de código aquí, llamamos al método del controlador
-    Route::get('/admin/dashboard', [OrderController::class, 'dashboard'])->name('admin.dashboard');
+    // Dashboard administrado por su propio controlador
+    Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-    // CRUDs Principales
+    // CRUDs
     Route::resource('admin/articles', ArticleController::class);
     Route::resource('admin/categories', CategoryController::class);
     Route::resource('admin/brands', BrandController::class);
     Route::resource('admin/orders', OrderController::class);
     Route::resource('admin/reviews', ReviewController::class);
 
-    // Listar usuarios con Filtros y Buscador
+    // Rutas de Usuarios...
     Route::get('admin/users', function (Illuminate\Http\Request $request) {
         $query = App\Models\User::query();
 
@@ -49,7 +50,6 @@ Route::middleware(['auth'])->group(function () {
         return view('admin.users', compact('users'));
     });
 
-    // Crear Nuevo Usuario desde el Formulario
     Route::post('admin/users', function (Illuminate\Http\Request $request) {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -68,7 +68,6 @@ Route::middleware(['auth'])->group(function () {
         return redirect('admin/users')->with('success', 'Usuario creado con éxito');
     });
 
-    // Eliminar Usuario
     Route::delete('admin/users/{id}', function ($id) {
         App\Models\User::destroy($id);
         return redirect('admin/users');
