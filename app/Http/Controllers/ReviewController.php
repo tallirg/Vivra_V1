@@ -26,7 +26,14 @@ class ReviewController extends Controller
         return redirect('/admin/reviews');
     }
 
-    // Agrega esta función en ReviewController.php
+    // 1. Esta función es nueva: Sirve para que la app lea las reseñas (JSON) en lugar de la vista web
+    public function getForExperience($experience_id)
+    {
+        $reviews = \App\Models\Review::with('user')->where('experience_id', $experience_id)->get();
+        return response()->json($reviews);
+    }
+
+    // 2. Esta función es la que te estaba dando el Error 500 porque no existía para guardar
     public function store(Request $request, $experience_id)
     {
         $request->validate([
@@ -34,8 +41,8 @@ class ReviewController extends Controller
             'comment' => 'required|string',
         ]);
 
-        $review = Review::create([
-            'experience_id' => $experience_id, // 🌟 Coincide con el fillable de su modelo
+        $review = \App\Models\Review::create([
+            'experience_id' => $experience_id, // Usamos el nombre correcto de tu BD
             'user_id' => auth()->id(),
             'rating' => $request->rating,
             'comment' => $request->comment,
@@ -47,4 +54,5 @@ class ReviewController extends Controller
             'data' => $review
         ], 201);
     }
+
 }
