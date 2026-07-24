@@ -38,7 +38,7 @@ class ChatbotController extends Controller
             . $contextText;
 
         // 4. Llamada HTTP a la API de Gemini 1.5 Flash
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}";
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={$apiKey}";
 
         try {
             $response = Http::post($url, [
