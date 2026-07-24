@@ -84,20 +84,22 @@ class AuthController extends Controller
     }
 
     // 🚪 Cerrar Sesión
-    public function logout(Request $request)
-    {
-        $isApi = $request->wantsJson() || $request->segment(1) === 'api';
-
-        if ($isApi) {
-            if (auth()->check() && method_exists(auth()->user(), 'tokens')) {
-                auth()->user()->tokens()->delete();
+    // 🚪 Cerrar Sesión (Diferencia entre Web y API)
+        public function logout(Request $request)
+        {
+            // Si la petición viene de la API (/api/logout o petición AJAX de Flutter)
+            if ($request->is('api/*') || $request->ajax()) {
+                if (auth()->check() && method_exists(auth()->user(), 'tokens')) {
+                    auth()->user()->tokens()->delete();
+                }
+                return response()->json(['message' => 'Sesión cerrada exitosamente']);
             }
-            return response()->json(['message' => 'Sesión cerrada exitosamente']);
-        }
 
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/login');
-    }
+            // Si viene del formulario Web (Navegador)
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect('/login');
+        }
 }
