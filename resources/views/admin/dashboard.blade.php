@@ -92,7 +92,7 @@
                 <tr class="border-b border-warm-100 hover:bg-warm-50 transition">
                     <td class="py-4 px-6 text-sm font-bold text-warm-800">#{{ $order->id }}</td>
                     <td class="py-4 px-6 text-sm text-warm-700">{{ $order->user->name ?? 'Usuario' }}</td>
-                    <td class="py-4 px-6 text-sm text-warm-700">{{ $order->experience->name ?? 'Experiencia' }}</td>
+                    <td class="py-4 px-6 text-sm text-warm-700">{{ $order->experience->name ?? 'N/A' }}</td>
                     <td class="py-4 px-6">
                         <span class="text-xs font-bold px-3 py-1 rounded-full bg-green-100 text-green-800">
                             {{ ucfirst($order->status ?? 'Completado') }}
