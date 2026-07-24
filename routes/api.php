@@ -10,6 +10,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\MessageController;
 
 // =========================================================================
 // RUTAS PÚBLICAS
@@ -50,6 +51,11 @@ Route::middleware(['web', 'auth:web'])->group(function () {
 // RUTAS API (Usa autenticación por Token 'auth:sanctum')
 // =========================================================================
 Route::middleware('auth:sanctum')->group(function () {
+
+    // 💬 CHAT DIRECTO ENTRE USUARIOS
+    Route::get('/conversations', [MessageController::class, 'conversations']);
+    Route::get('/messages', [MessageController::class, 'getMessages']);
+    Route::post('/messages', [MessageController::class, 'store']);
 
     // --- TURISTA ---
     Route::middleware('role:tourist')->group(function () {
