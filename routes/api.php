@@ -74,6 +74,8 @@ Route::middleware('auth:sanctum')->group(function () {
         // 🌟 ELIMINAR: Corregimos la ruta para incluir {id}
         Route::delete('/experiencias/{id}', [ArticleController::class, 'destroy']);
         Route::post('/experiencias/{id}/delete', [ArticleController::class, 'destroy']); // Opcional para spoofing
+
+        Route::get('/provider/reservaciones', [BookingController::class, 'providerBookings']);
     });
 
     // --- ADMIN API ---
