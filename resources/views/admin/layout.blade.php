@@ -171,12 +171,25 @@
             </nav>
 
             <div class="p-6 border-t-2 border-accent-sand">
-                <div class="bg-gradient-to-br from-orange-100 to-orange-50 p-4 rounded-lg flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold">A</div>
-                    <div>
-                        <p class="text-sm font-bold text-warm-700">Admin</p>
-                        <p class="text-xs text-warm-600">en línea</p>
+                <div class="bg-gradient-to-br from-orange-100 to-orange-50 p-4 rounded-lg flex items-center justify-between gap-3">
+                    <!-- Avatar e Info del Admin -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold">
+                            A
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-warm-700">Admin</p>
+                            <p class="text-xs text-warm-600">en línea</p>
+                        </div>
                     </div>
+
+                    <!-- Botón para Cerrar Sesión -->
+                    <form action="{{ route('logout') }}" method="POST" class="m-0">
+                        @csrf
+                        <button type="submit" class="text-warm-600 hover:text-red-600 p-2 rounded-lg transition" title="Cerrar Sesión">
+                            <i class="fas fa-sign-out-alt text-lg"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

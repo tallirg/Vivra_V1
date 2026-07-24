@@ -24,7 +24,7 @@
                 <tr class="border-b border-warm-100 hover:bg-warm-50 transition">
                     <td class="py-4 px-6 text-sm font-bold text-warm-800">#{{ $order->id }}</td>
                     <td class="py-4 px-6 text-sm text-warm-700">{{ $order->user->name ?? 'N/A' }}</td>
-                    <td class="py-4 px-6 text-sm text-warm-700">{{ $order->articles->name ?? $order->experience->title ?? 'N/A' }}</td>
+                    <td class="py-4 px-6 text-sm text-warm-700">{{ $order->articles->name ?? 'N/A' }}</td>
                     <td class="py-4 px-6 text-sm font-bold text-warm-800">${{ $order->total_price }}</td>
                     <td class="py-4 px-6">
                         @if($order->status == 'completed')
