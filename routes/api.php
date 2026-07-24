@@ -61,8 +61,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- PRESTADOR ---
     Route::middleware('role:provider')->group(function () {
-        Route::post('/experiencias', [ArticleController::class, 'store']);
+        // Lista de mis experiencias
         Route::get('/mis-experiencias', [ArticleController::class, 'myExperiences']);
+
+        // Crear experiencia
+        Route::post('/experiencias', [ArticleController::class, 'store']);
+
+        // 🌟 ACTUALIZAR: Agregamos las rutas para editar (con PUT y POST con _method)
+        Route::put('/experiencias/{id}', [ArticleController::class, 'update']);
+        Route::post('/experiencias/{id}', [ArticleController::class, 'update']); 
+
+        // 🌟 ELIMINAR: Corregimos la ruta para incluir {id}
+        Route::delete('/experiencias/{id}', [ArticleController::class, 'destroy']);
+        Route::post('/experiencias/{id}/delete', [ArticleController::class, 'destroy']); // Opcional para spoofing
     });
 
     // --- ADMIN API ---
