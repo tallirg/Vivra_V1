@@ -9,8 +9,8 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
-        return view('admin.categories', compact('categories'));
+        // Retorna solo las categorías activas de la BD (Tours, Experiencias, Naturaleza, etc.)
+        return response()->json(Category::where('active', true)->get());
     }
 
     public function store(Request $request)
