@@ -58,7 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/conversations', [MessageController::class, 'conversations']);
     Route::get('/messages', [MessageController::class, 'getMessages']);
     Route::post('/messages', [MessageController::class, 'store']);
-
+    
     Route::get('/user', function (Request $request) { return $request->user(); });
 
     // --- TURISTA ---
@@ -86,6 +86,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/experiencias/{id}/delete', [ArticleController::class, 'destroy']); // Opcional para spoofing
 
         Route::get('/provider/reservaciones', [BookingController::class, 'providerBookings']);
+        Route::put('/provider/reservaciones/{id}/approve', [BookingController::class, 'approvePayment']);
     });
 
     // --- ADMIN API ---
