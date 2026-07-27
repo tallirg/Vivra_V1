@@ -26,18 +26,16 @@ class ArticleController extends Controller
     public function store(Request $request)
 {
     try {
-        // 1. Extraemos todos los datos enviados desde Flutter
         $data = $request->all();
 
-        // 2. 🔑 CORRECCIÓN CLAVE: Asignamos el ID del usuario del Token de Sanctum
+        // Asignamos el ID del usuario del Token de Sanctum a brand_id
         if ($request->user()) {
-            $data['user_id'] = $request->user()->id;
+            $data['brand_id'] = $request->user()->id;
+            $data['user_id'] = $request->user()->id; // Por si usas ambas columnas
         }
 
-        // 3. Creamos la experiencia con el user_id asignado
         $article = Article::create($data);
 
-        // Manejo de horarios (schedules)
         if ($request->has('schedules')) {
             $schedules = is_string($request->schedules) 
                 ? json_decode($request->schedules, true) 
@@ -56,10 +54,10 @@ class ArticleController extends Controller
                 'article' => $article->load('schedules')
             ], 201);
         }
+
         return redirect('/admin/articles');
 
     } catch (\Exception $e) {
-        // Devuelve el mensaje exacto de la falla para depuración
         return response()->json([
             'message' => 'Error de BD: ' . $e->getMessage()
         ], 500);
