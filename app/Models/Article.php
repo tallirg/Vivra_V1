@@ -17,7 +17,8 @@ class Article extends Model
         'location',
         'duration_minutes',
         'included_persons',
-        'extra_person_price'
+        'extra_person_price',
+        'image'
         ];
     public $timestamps = true;
 
