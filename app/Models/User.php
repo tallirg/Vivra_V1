@@ -26,14 +26,15 @@ class User extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
-}
 
-public function sentMessages()
-{
-    return $this->hasMany(Message::class, 'sender_id');
-}
+    // 🌟 MIRA, LAS FUNCIONES AHORA ESTÁN ADENTRO
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
 
-public function receivedMessages()
-{
-    return $this->hasMany(Message::class, 'receiver_id');
-}
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+} 
