@@ -24,18 +24,31 @@ class ArticleController extends Controller
     }
 
     public function store(Request $request)
-    {
+{
+    try {
         $article = Article::create($request->all());
+
+        if ($request->has('schedules')) {
+            foreach ($request->schedules as $scheduleData) {
+                $article->schedules()->create($scheduleData);
+            }
+        }
 
         if ($request->wantsJson() || $request->segment(1) === 'api') {
             return response()->json([
                 'message' => 'Experiencia creada con éxito',
-                'article' => $article
+                'article' => $article->load('schedules')
             ], 201);
         }
-
         return redirect('/admin/articles');
+
+    } catch (\Exception $e) {
+        // 🌟 LA TRAMPA: Esto nos dirá exactamente qué columna o archivo falló
+        return response()->json([
+            'message' => 'Error de BD: ' . $e->getMessage()
+        ], 500);
     }
+}
 
     public function show(Request $request, $id)
     {
@@ -93,7 +106,7 @@ class ArticleController extends Controller
     public function myExperiences(Request $request)
     {
         $userId = auth()->id();
-        $articles = Article::where('user_id', $userId)->get();
+        $articles = Article::where('brand_id', $userId)->get();
 
         if ($request->wantsJson() || $request->segment(1) === 'api') {
             return response()->json($articles, 200);
@@ -101,4 +114,5 @@ class ArticleController extends Controller
 
         return view('admin.articles', compact('articles'));
     }
+
 }

@@ -18,6 +18,7 @@ use App\Http\Controllers\MessageController;
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/register', [AuthController::class, 'register']);
 // 🤖 Ruta para el Chatbot de IA (Gemini)
 Route::post('/chat', [ChatbotController::class, 'chat']);
 Route::get('/categories', [CategoryController::class, 'index']);
@@ -57,6 +58,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/conversations', [MessageController::class, 'conversations']);
     Route::get('/messages', [MessageController::class, 'getMessages']);
     Route::post('/messages', [MessageController::class, 'store']);
+
+    Route::get('/user', function (Request $request) { return $request->user(); });
 
     // --- TURISTA ---
     Route::middleware('role:tourist')->group(function () {
