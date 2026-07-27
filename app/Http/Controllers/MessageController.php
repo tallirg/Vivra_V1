@@ -50,21 +50,16 @@ class MessageController extends Controller
     // Enviar un mensaje
     public function store(Request $request)
     {
+        // 1. Validamos estrictamente el ID del receptor, no su nombre
         $request->validate([
             'message' => 'required|string',
-            'receiver_name' => 'required|string'
+            'receiver_id' => 'required|integer' 
         ]);
 
-        // Buscamos al usuario por nombre (o ajustamos para mandar el ID luego)
-        $receiver = User::where('name', $request->receiver_name)->first();
-
-        if(!$receiver) {
-            return response()->json(['message' => 'Usuario no encontrado'], 404);
-        }
-
+        // 2. Guardamos el mensaje directo usando los IDs correctos
         $message = Message::create([
             'sender_id' => auth()->id(),
-            'receiver_id' => $receiver->id,
+            'receiver_id' => $request->receiver_id,
             'message' => $request->message
         ]);
 
