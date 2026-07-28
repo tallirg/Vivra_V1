@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Review;
 use Illuminate\Http\Request;
+use App\Models\Article;
 
 class ReviewController extends Controller
 {
@@ -29,7 +30,7 @@ class ReviewController extends Controller
     // 1. Esta función es nueva: Sirve para que la app lea las reseñas (JSON) en lugar de la vista web
     public function getForExperience($experience_id)
     {
-        $reviews = \App\Models\Review::with('user')->where('experience_id', $experience_id)->get();
+        $reviews = Review::with('user')->where('experience_id', $experience_id)->get();
         return response()->json($reviews);
     }
 
@@ -41,8 +42,14 @@ class ReviewController extends Controller
             'comment' => 'required|string',
         ]);
 
-        $review = \App\Models\Review::create([
-            'experience_id' => $experience_id, // Usamos el nombre correcto de tu BD
+        // Verificación de que la experiencia existe
+        $experience = Article::find($experience_id);
+        if (!$experience) {
+            return response()->json(['message' => 'Experiencia no encontrada'], 404);
+        }
+
+        $review = Review::create([
+            'experience_id' => $experience_id,
             'user_id' => auth()->id(),
             'rating' => $request->rating,
             'comment' => $request->comment,
