@@ -50,24 +50,17 @@ class MessageController extends Controller
     // Enviar un mensaje
     public function store(Request $request)
     {
-        $request->validate([
-            'message' => 'required|string',
-            'receiver_name' => 'required|string'
-        ]);
+    $request->validate([
+        'message' => 'required|string',
+        'receiver_id' => 'required|integer' 
+    ]);
 
-        // Buscamos al usuario por nombre (o ajustamos para mandar el ID luego)
-        $receiver = User::where('name', $request->receiver_name)->first();
+    $message = Message::create([
+        'sender_id' => auth()->id(),
+        'receiver_id' => $request->receiver_id,
+        'message' => $request->message
+    ]);
 
-        if(!$receiver) {
-            return response()->json(['message' => 'Usuario no encontrado'], 404);
-        }
-
-        $message = Message::create([
-            'sender_id' => auth()->id(),
-            'receiver_id' => $receiver->id,
-            'message' => $request->message
-        ]);
-
-        return response()->json($message, 201);
-    }
+    return response()->json($message, 201);
+}
 }

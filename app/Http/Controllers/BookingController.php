@@ -13,12 +13,13 @@ class BookingController extends Controller
 {
     public function store(Request $request)
     {
-        // 1. Validación básica de los datos que llegan desde Flutter
+        // 1. Validación (🌟 AGREGAMOS EL METODO DE PAGO)
         $request->validate([
-            'experience_id' => 'required|exists:articles,id',
-            'schedule_id'   => 'required|exists:article_schedules,id',
-            'booking_date'  => 'required|date',
-            'quantity'      => 'required|integer|min:1',
+            'experience_id'  => 'required|exists:articles,id',
+            'schedule_id'    => 'required|exists:article_schedules,id',
+            'booking_date'   => 'required|date',
+            'quantity'       => 'required|integer|min:1',
+            'payment_method' => 'required|string' // 🌟 NUEVO
         ]);
 
         $article = Article::findOrFail($request->experience_id);
@@ -29,7 +30,7 @@ class BookingController extends Controller
         // =========================================================
         $lugaresOcupados = Order::where('schedule_id', $schedule->id)
             ->where('booking_date', $request->booking_date)
-            ->where('status', 'confirmed')
+            ->where('status', 'confirmed') // (Los pendientes no quitan lugar oficial hasta aprobarse)
             ->sum('quantity');
 
         if (($lugaresOcupados + $request->quantity) > $schedule->stock) {
@@ -41,12 +42,9 @@ class BookingController extends Controller
         // =========================================================
         // FILTRO 2: CRUCE DE HORARIOS
         // =========================================================
-        
-        // Calculamos a qué hora terminas tu nueva experiencia
         $nuevoInicio = Carbon::parse($schedule->start_time);
         $nuevoFin = $nuevoInicio->copy()->addMinutes($article->duration_minutes);
 
-        // Traemos todas las reservas de este turista para el mismo día
         $reservasDelDia = Order::with('schedule.article')
             ->where('user_id', Auth::id())
             ->where('booking_date', $request->booking_date)
@@ -54,13 +52,11 @@ class BookingController extends Controller
             ->get();
 
         foreach ($reservasDelDia as $reservaVieja) {
-            // Saltamos las órdenes viejas que no tengan horario (las de prueba que hicimos antes)
             if (!$reservaVieja->schedule) continue;
 
             $viejoInicio = Carbon::parse($reservaVieja->schedule->start_time);
             $viejoFin = $viejoInicio->copy()->addMinutes($reservaVieja->schedule->article->duration_minutes);
 
-            // Fórmula matemática de empalme: (Nuevo Inicio < Viejo Fin) Y (Nuevo Fin > Viejo Inicio)
             if ($nuevoInicio < $viejoFin && $nuevoFin > $viejoInicio) {
                 return response()->json([
                     'message' => 'Cruce de horarios detectado. Esta experiencia choca con otra reservación que tienes de ' 
@@ -77,6 +73,9 @@ class BookingController extends Controller
         $costoExtra = $personasExtra * $article->extra_person_price;
         $precioTotal = $precioBase + $costoExtra;
 
+        // 🌟 LÓGICA DE EFECTIVO O TARJETA
+        $estadoInicial = ($request->payment_method === 'efectivo') ? 'pending' : 'confirmed';
+
         // =========================================================
         // GUARDAR LA RESERVA
         // =========================================================
@@ -87,17 +86,29 @@ class BookingController extends Controller
             'booking_date'   => $request->booking_date,
             'quantity'       => $request->quantity,
             'total_price'    => $precioTotal,
-            'status'         => 'confirmed',
-            'payment_method' => 'tarjeta',
+            'status'         => $estadoInicial, // 🌟 DINÁMICO
+            'payment_method' => $request->payment_method, // 🌟 DINÁMICO
             'order_date'     => now(),
             'notes'          => 'Reserva validada correctamente'
         ]);
 
-        // Regresamos la orden con su horario cargado para que Flutter la muestre completa
         return response()->json([
             'message' => 'Reserva confirmada exitosamente',
             'order'   => $order->load('schedule.article')
         ], 201);
+    }
+
+    // 🌟 NUEVA FUNCIÓN PARA APROBAR EL PAGO EN EFECTIVO
+    public function approvePayment($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->status = 'confirmed';
+        $order->save();
+
+        return response()->json([
+            'message' => 'Pago aprobado y reserva confirmada',
+            'order'   => $order
+        ], 200);
     }
 
     public function myBookings()
